@@ -6,15 +6,20 @@ import time
 import datetime
 import uuid
 
-def getUUID():
-    return str(uuid.uuid4()).upper()
-
 
 def generate_project_xml(project_root):
+    """
+    Creates a project.rs.xml file at the given path
+    :param project_root: The path to where we want to make an xml file
+    :return:
+    """
     xml_file = project_root + "\project.rs.xml"
     if os.path.exists(xml_file):
         os.remove(xml_file)
+
     watershed = os.path.basename(os.path.dirname(project_root))
+    if watershed == "JohnDay":
+        watershed = "John Day"
     site = os.path.basename(project_root)
 
     new_xml_file = XMLBuilder(xml_file,
@@ -158,7 +163,7 @@ def add_analysis(new_xml_file, analyses_element, flow_path, root_to_flow_path, y
         outputs_element = new_xml_file.add_sub_element(fis_element, "Outputs")
 
         # begins raster subtree
-        raster_element = new_xml_file.add_sub_element(outputs_element, "Raster", tags=[('id', "")])
+        raster_element = new_xml_file.add_sub_element(outputs_element, "Raster", tags=[('id', "raster_01")])
         new_xml_file.add_sub_element(raster_element, "Name", "Fish Habitat")
         new_xml_file.add_sub_element(raster_element, "Path", root_to_analyses_path + "\FIS\\" + fish + "\\" + lifestage + "\Run_01\FuzzyHQ.tif")
 
@@ -182,7 +187,7 @@ def add_analysis(new_xml_file, analyses_element, flow_path, root_to_flow_path, y
         outputs_element = new_xml_file.add_sub_element(hsi_element, "Outputs")
 
         # begins raster subtree
-        raster_element = new_xml_file.add_sub_element(outputs_element, "Raster", tags=[('id', "")])
+        raster_element = new_xml_file.add_sub_element(outputs_element, "Raster", tags=[('id', "raster_02")])
         new_xml_file.add_sub_element(raster_element, "Name", "Fish Habitat")
         new_xml_file.add_sub_element(raster_element, "Path", root_to_analyses_path + "\HSI\\" + fish + '\\' +
                                      lifestage + "\Run_01\HSI.tif")
@@ -196,13 +201,16 @@ def add_analysis(new_xml_file, analyses_element, flow_path, root_to_flow_path, y
 
 
 def main(FHM_data_root):
+    print "Creating XML project files..."
     for root, dirs, files in os.walk(FHM_data_root):
         if '2012' in dirs or '2013' in dirs or '2014' in dirs or '2015' in dirs or '2016' in dirs:
-            if len(dirs) > 1:
-                print root
-                generate_project_xml(root)
-            else:
-                generate_project_xml(root)
+            generate_project_xml(root)
+
+    print "XML project files created"
+
+
+def getUUID():
+    return str(uuid.uuid4()).upper()
 
 
 if __name__ == '__main__':

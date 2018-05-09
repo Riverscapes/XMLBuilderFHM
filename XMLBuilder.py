@@ -1,4 +1,3 @@
-import xml
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 
@@ -29,7 +28,7 @@ class XMLBuilder:
         :param name: The name of the new sub element
         :param text: The text that is meant to go within the element
         :param tags: A list of tuples. The first element contains the name of the tag, the second contains the value
-        :return: The subelement created. Useful if the user wants to append subelements to it
+        :return: The subelement created. Useful if the user wants to append additional subelements to it
         """
         new_element = ET.SubElement(base_element, name)
         new_element.text = text
@@ -41,10 +40,12 @@ class XMLBuilder:
 
     def write(self):
         """
-        Return a pretty-printed XML string for the Element.
+        Creates a pretty-printed XML string for the Element,
         then write it out to the expected file
         """
         temp_string = minidom.parseString(ET.tostring(self.root)).toprettyxml(encoding="UTF-8")
-        f = open(self.xml_file, "w")
-        f.write(temp_string)
-        f.close()
+        with open(self.xml_file, 'w') as f:
+            f.write(temp_string)
+        # f = open(self.xml_file, "w")
+        # f.write(temp_string)
+        # f.close()
